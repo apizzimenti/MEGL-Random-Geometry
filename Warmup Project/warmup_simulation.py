@@ -2,6 +2,7 @@ import argparse
 import csv
 from warmup_helpers import simulate_percolation
 import numpy as np
+from tqdm import tqdm
 
 def run_simulation(output_file, lower_p, upper_p, lower_N, upper_N, trials):
     headers = ["N", "p", "prop_first", "prop_second"]
@@ -13,13 +14,16 @@ def run_simulation(output_file, lower_p, upper_p, lower_N, upper_N, trials):
         writer = csv.writer(f)
         writer.writerow(headers)
 
-        for p in p_values:
+        p_bar = tqdm(p_values, desc="Total Progress")
+        for p in p_bar:
             current_p = round(p, 2)
-            for N in N_values:
-                for trial in range(0, trials):
+            p_bar.set_postfix(p=current_p)
+
+            for N in tqdm(N_values, desc=f"N values for p={current_p}", leave=False):
+                for trial in range(trials):
                     prop_first, prop_second = simulate_percolation(N, current_p)
                     writer.writerow([N, current_p, prop_first, prop_second])
-
+                
                 f.flush()
                 
 
@@ -32,8 +36,8 @@ if __name__ == "__main__":
     parser.add_argument("--lp", type=float, default=0.1, help = "Lower p (default 0.1)")
     parser.add_argument("--up", type=float, default=1.0, help = "Upper p (default 1.0)")
     parser.add_argument("--ln", type=int, default=2, help = "Lower N (default 2)")
-    parser.add_argument("--un", type=int, default=100, help = "Upper N (default 100)")
-    parser.add_argument("--trials", type=int, default=30, help = "Trials per N/p (default 30)")
+    parser.add_argument("--un", type=int, default=30, help = "Upper N (default 30)")
+    parser.add_argument("--trials", type=int, default=5, help = "Trials per N/p (default 5)")
     
     args = parser.parse_args()
 
