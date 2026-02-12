@@ -88,7 +88,7 @@ print(B2)
 
 print(f"\nDimension of H1: {H1_dim}")
 
-if H1_dim > 0:
+if H1_dim >= 0:
     print("complex has a hole")
 else:
     print("complex has no hole")
