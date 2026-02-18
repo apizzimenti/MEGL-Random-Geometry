@@ -9,10 +9,9 @@ def printer(A, split):
 
 	for i in range(m):
 		for j in range(n):
-			if j == split: print("| ", end="")
+			if j in split: print("| ", end="")
 			print(f"{A[i,j]} ", end="")
 		print()
-
 
 
 # Set the base field as Z/2Z; we'll change the field later.
@@ -51,14 +50,14 @@ reduced = augmented.row_reduce()
 # The index of the lowest zero row in the original matrix is also the index of
 # the first (row) vector in the basis of the kernel.
 low = np.where(~(reduced[:,:B1.shape[0]]).any(axis=1))[0][0]
-
 kernel = reduced[low:,B1.shape[0]:].T
 
 
 # Now we can compute the rank of ker(B1)/im(B2) by adjoining the kernel on the
 # right of B2, then row-reducing, then applying rank-nullity.
-augmented = F(np.concatenate([B2, kernel], axis=1))
+augmented = F(np.concatenate([B2, kernel, F.Identity(kernel.shape[0])], axis=1))
 reduced = augmented.row_reduce()
+
 
 # This indexing step counts the rank of ker(B1)/im(B2) in a hacky way: since we
 # know rank(im(B2)), we can just count the number of nonzero rows in the submatrix
